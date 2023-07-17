@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model publication {
+  id              Int      @id(map: "publication_pk") @default(autoincrement())
+  image           String   @db.VarChar(255)
+  title           String   @db.VarChar(255)
+  text            String   @db.VarChar(255)
+  date_to_publish DateTime @db.Date
+  published       Boolean  @default(false)
+  social_media    String   @db.VarChar(255)
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  user_id         Int
+  users           users    @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "publication_fk0")
+}
+
+model users {
+  id          Int           @id(map: "user_pk") @default(autoincrement())
+  name        String        @db.VarChar(150)
+  email       String        @unique @db.VarChar(150)
+  password    String        @db.VarChar(150)
+  avatar      String        @db.VarChar(150)
+  created_at  DateTime      @default(now()) @db.Timestamptz(6)
+  publication publication[]
+}
